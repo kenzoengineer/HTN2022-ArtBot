@@ -5,12 +5,12 @@ const { getArtById } = require("../utils/artEmbed.js");
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName("artname")
+		.setName("artsearch")
 		.setDescription("Search for an art piece")
 		.addStringOption(option => option.setName("search").setDescription("Search query").setRequired(true)),
 	async execute(interaction) {
 		const q = interaction.options.getString("search");
-		URI = `https://api.artic.edu/api/v1/search?q=${q}`;
+		const URI = `https://api.artic.edu/api/v1/search?q=${q}`;
 		fetch(URI, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -34,11 +34,6 @@ module.exports = {
 												field: "image_id",
 											},
 										},
-										{
-											term: {
-												is_public_domain: true,
-											},
-										},
 									],
 								},
 							},
@@ -53,7 +48,7 @@ module.exports = {
 			const titles = [];
 			const artists = [];
 			const ids = [];
-            res = res.data.map((curr, index) => {
+            res.data.map((curr, index) => {
 				indices.push(index);
 				titles.push(`**${curr.title.substring(0,20)}${curr.title.length >= 20 ? "..." : ""}**`);
 				artists.push(curr.artist_title);
@@ -66,7 +61,7 @@ module.exports = {
 					{name: "Title", value: titles.join("\n"), inline: true},
 					{name: "Artist", value: artists.join("\n"), inline: true}
 				)
-				.setFooter({text: "Type an index to select an art piece - This will expire in 10 seconds"});
+				.setFooter({text: "Type an index to show an art piece - This will expire in 10 seconds"});
             interaction.reply({ embeds: [embed] });
 			
 			const filter = m => {

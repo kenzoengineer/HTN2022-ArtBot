@@ -7,7 +7,7 @@ module.exports = {
         .then(res => res.json())
         .then(res => {
             res = res.data;
-            if (!res) return interaction.reply({content: `Error: Could not find artwork matching id **${id}**`, ephemeral: true});
+            if (!res) return new EmbedBuilder().setTitle(`Error: Could not find artwork with id **${id}**`);
             const embed = new EmbedBuilder()
                 .setTitle(res.title)
                 .setDescription(res.artist_title)
