@@ -2,6 +2,7 @@
   "dependencies": {
     "@discordjs/rest": "^1.0.1",
     "discord.js": "^14.2.0",
-    "fs": "^0.0.1-security"
+    "fs": "^0.0.1-security",
+    "undici": "^5.9.1"
   }
 }
