@@ -14,12 +14,10 @@ const client = new Client({
 
 // command setup
 client.commands = new Collection();
-const initialCommands = [];
 const commandFiles = fs.readdirSync("./commands");
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
     client.commands.set(command.data.name, command);
-    initialCommands.push(command.data);
 }
 
 // event setup
@@ -37,7 +35,7 @@ client.rest = new REST({ version: "10" }).setToken(token);
 const main = async () =>{
     try {
         await client.rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
-            body: initialCommands
+            body: [...client.commands.values()].map(x => x = x.data)
         });
     } catch (err) {
         console.error(err);
