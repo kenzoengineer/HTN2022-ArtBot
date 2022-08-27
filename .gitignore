@@ -1,9 +1,6 @@
 #auth
 config.json
 
-#presentation
-presentation.md
-
 # Logs
 logs
 *.log
