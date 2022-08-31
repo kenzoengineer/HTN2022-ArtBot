@@ -1,3 +1,7 @@
+# For those viewing this file on github
+These are the notes I used to give my workshop, its a mix of complete sentences and pointform notes. If you missed something in the workshop, you might be able to find info about it here.
+
+
 # Slide 1
 
 - Workshop is about Discord Bots, using Discord.js
@@ -119,7 +123,7 @@
   - Save changes
 - Go to OAuth2
   - **APPLICATION.COMMANDS** AND **BOT**
-  - Select some permissions
+  - Select some permissions [send messages, use slash commands]
   - copy paste it
   - And there you go, the bot is added to your server
 - It doesn't do anything yet, however, because we haven't told it what to do
@@ -725,3 +729,62 @@ So we will display this to the user, but how do we know which one the user selec
 ```
 
 # THE BOT IS DONE BEING CODED!!!
+
+Now, let's move on to deployment:
+
+We are lucky that deploying discord bots is a fairly easy and straightforward process.
+- Our discord bot runs entirely through our node script, so as long as that app is open, the bot will be on
+  - So technically speaking, we can host our discord bot for "free" by running the app and keeping our computer open
+  - We can also use an npm package called `forever` to automatically turn our bot back on when it crashes
+  - This may not be practical, because your computer has to be on all the time
+
+So thus, I present to you 4 deployment solutions, with pros and cons to each
+- Repl.it
+- Raspberry Pi
+- Heroku
+- AWS (EC2)
+
+I am not affiliated with any of these services
+
+## Repl.it
+- Repl.it is an online IDE and code sharing plaform
+  - One of its key selling points is real time code collaboration
+  - Its IDE has a debugger, key value database, secrets (env variables) and even github integration
+  - All of the above features makes it very convinient to host your bot on repl.it, and best of all, it is free
+  - Your repl.it's won't be on forever so we cheat to make it stay on
+    - We abuse the fact that repl.it keeps web apps on for 2 hours of inactivity, so if we make a web server in our bot, then ping it every 2 hours our bot will stay on forever
+    - To do this, we can use a uptime detection site like uptime-robot which will send a request to our server every 5 min
+
+  - Some downsides would be
+    - It's a little bit slow, especially if your codebase gets larger or if you need to serve many people
+    - For a small server with your friends, its perfect, but for bigger apps you might want to look for an alternate solution
+
+## Raspberry Pi
+- An unconventional yet simple solution can be to host your bot on a raspberry pi
+  - A Raspberry Pi is a small computer that runs Linux
+  - People use raspberry pi's for things like media centers, smart home, and small servers like our bot
+  - They are relatively inexpensive, starting at around $60 CAD for a model with 2GB of ram, more than enough for a discord bot.
+  - This approach follows the "keeping your computer on 24/7" approach, as we will just open our discord bot on our rasp pi and keep it running with `forever`
+  - The voltage draw from a rasp pi is fairly small, so this is a fairly economical solution, and you have a lot of control over the deployment
+
+## Heroku
+- Heroku is a is a PaaS (platform as a service) solution
+  - It has many features at different price tiers, such as postgres/redis intergrations, github integrations, auto CI/CD, metrics, scalability, containerization and many more
+  - Discord has a great resource for how to set up you discord bot with heroku in their [documentation](https://discord.com/developers/docs/tutorials/hosting-on-heroku#:~:text=To%20create%20your%20Discord%20app,the%20Client%20ID%20for%20later.)
+
+## AWS (Lightsail, Beanstalk, EC2)
+- AWS is amazons offering for web
+  - It has over 200 different services, covering the entire web space
+  - There are multiple ways to host discord bots on AWS but I will just mention w
+    - Lightsail, Beanstalk and EC2
+
+### Lightsail
+- Lightsail is a newer AWS service, allowing for very simple deployment of web applications
+- This type of small scale deployment is enough for discord bots, and a lot of the features included in higher tier, more complex AWS services won't be utilixed to their full potential
+
+### EC2 and Beanstalk
+- EC2 is a linux server just like a rasbperry pi, but more feature rich and more complicated to set up
+  - You get a free year of their 1GB RAM instance, but you will have to pay for bonus resources and storage
+    - If you are new to deployment and web services then I wouldn't recommend trying to create an EC2 instance, it may be a little too complex. There is an entire job position just dedicated to managing deployment and management of services on AWS after all
+- This is why there is an easier alternative for EC2 and thats beanstalk
+  - Beanstalk sets up a EC2 instance for you. It accepts a zip file of all your code and runs `npm start`. This could be the better solution for beginners
