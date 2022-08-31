@@ -635,3 +635,93 @@ module.exports = {
 }
 ```
 
+And then after we need to tell the command what to do.
+- First we will get a list of a couple matching art pieces
+- Then we will ask the user for input
+- Then we will take the input, retrive the corresponding ID and use `artEmbed.js` to output the emded
+
+```js
+// create execute function
+	async execute(interaction) {
+    // retrieve parameter
+		const q = interaction.options.getString("search");
+    // fetch from the search rest api
+    // only get the id, title, artist, and limit it to **10 RESULTS**
+		fetch(`https://api.artic.edu/api/v1/artworks/search?fields=id,title,artist_title&limit=10&q=${q}`, {
+				method: "POST",
+        // we will receive JSON
+				headers: { "Content-Type": "application/json" },
+			}
+		)
+  }
+  ```
+
+Then parse as JSON
+```js
+		.then(res => res.json())
+```
+
+** Definitely show a diagram here **
+
+```js
+    const TRUNCATION = 30;
+
+  //[...]
+
+		.then((res) => {
+      // get a list of the index, titles, artists, and IDs (don't show IDs)
+			const indices = [];
+			const titles = [];
+			const artists = [];
+			const ids = [];
+      // now for every result we get back...
+      res.data.map((curr, index) => {
+        // we increment our indices (1, 2, 3...)
+				indices.push(index);
+        // we add the tile, but truncate it to a certain length (e.g. 3)
+				titles.push(`**${curr.title.substring(0,TRUNCATION)}${curr.title.length >= TRUNCATION ? "..." : ""}**`);
+        // then add the artists and ids
+				artists.push(curr.artist_title ?? "Unknown");
+				ids.push(curr.id);
+			});
+      // now we create the embed and display it
+            const embed = new EmbedBuilder()
+                .setTitle("Search Results")
+                .addFields(
+					{name: "Index", value: indices.join("\n"), inline: true},
+					{name: "Title", value: titles.join("\n"), inline: true},
+					{name: "Artist", value: artists.join("\n"), inline: true}
+				)
+				.setFooter({text: "Type an index to show an art piece - This will expire in 10 seconds"});
+            interaction.reply({ embeds: [embed] });
+    });
+```
+
+So we will display this to the user, but how do we know which one the user selects?
+- We will use a filter and a **colector**
+  - A collector "collects" messages. We will wait for 1 valid response for a max of 10 seconds
+```js
+      // we create our filter
+			const filter = m => {
+				return !isNaN(parseInt(m.content)) && parseInt(m.content) >= 0 && parseInt(m.content) <= Math.min(9, indices.length) && m.author.id === interaction.user.id;
+			};
+      // create our collector
+			const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 10000 });
+
+      // heres another event! this will happen whenever the collector finds a valid message to collect
+			collector.on('collect', m => {
+        // we will out put the ID!
+				getArtById(ids[m.content]).then(res => {
+					interaction.followUp({embeds: [res]});
+				});
+			});
+			
+      // another event! when it ends, we have to see if it found something. If not, lets followup with a message.
+			collector.on('end', collected => {
+				if (collected.size === 0) {
+					interaction.followUp("Did not receive a response, please try again.");
+				}
+			});
+```
+
+# THE BOT IS DONE BEING CODED!!!
