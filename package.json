@@ -3,6 +3,7 @@
     "@discordjs/rest": "^1.0.1",
     "discord.js": "^14.2.0",
     "fs": "^0.0.1-security",
+    "nodemon": "^2.0.19",
     "undici": "^5.9.1"
   },
   "devDependencies": {

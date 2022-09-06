@@ -3,7 +3,11 @@ const fs = require("fs");
 const { Client, Routes, GatewayIntentBits, Collection } = require("discord.js");
 const { token } = require("./config.json");
 
-// client setup
+// Client setup
+
+// We need to configure to client to have certain permissions
+// We need access to servers (guilds), access to the messages in servers (guilds),
+// and finally the content of messages
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -12,8 +16,17 @@ const client = new Client({
     ]
 });
 
-// command setup
+/*
+ * We want the ability to load commands and events dynamically. This will make adding and removing 
+ * commands/events seamless. We do this by making separate folders, then use fs to read all the files.
+ * After reading the files, we import ( require() ) the contents, save the commands and create the events
+*/
+
+// Command setup
+// First we create a collection (map) to contain the commands. We save this as a property on our client
+// so we can access it easier from other files
 client.commands = new Collection();
+// We load all the files in the ./commands directory
 const commandFiles = fs.readdirSync("./commands");
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);

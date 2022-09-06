@@ -730,6 +730,8 @@ So we will display this to the user, but how do we know which one the user selec
 
 # THE BOT IS DONE BEING CODED!!!
 
+## Slide 18
+
 Now, let's move on to deployment:
 
 We are lucky that deploying discord bots is a fairly easy and straightforward process.
@@ -744,10 +746,8 @@ So thus, I present to you 4 deployment solutions, with pros and cons to each
 - Heroku
 - AWS (EC2)
 
-I am not affiliated with any of these services
-
 ## Repl.it
-- Repl.it is an online IDE and code sharing plaform
+- Repl.it is an online IDE and code sharing platform
   - One of its key selling points is real time code collaboration
   - Its IDE has a debugger, key value database, secrets (env variables) and even github integration
   - All of the above features makes it very convinient to host your bot on repl.it, and best of all, it is free
