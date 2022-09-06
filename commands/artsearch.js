@@ -44,13 +44,13 @@ module.exports = {
 			};
 			const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 10000 });
 
-			collector.on('collect', m => {
+			collector.on("collect", m => {
 				getArtById(ids[m.content]).then(res => {
 					interaction.followUp({embeds: [res]});
 				});
 			});
 			
-			collector.on('end', collected => {
+			collector.on("end", collected => {
 				if (collected.size === 0) {
 					interaction.followUp("Did not receive a response, please try again.");
 				}
