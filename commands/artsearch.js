@@ -29,16 +29,26 @@ module.exports = {
 		)
 		.then(res => res.json())
 		.then((res) => {
+			// our search results embed will have 3 columns:
+			// an index so the user can select it later (0, 1, 2...)
 			const indices = [];
+			// the title of the artwork
 			const titles = [];
+			// the artist of the artwork
 			const artists = [];
+			// we don't display this to the user, but we keep track of the art id so we can easily output it later
 			const ids = [];
+			// for every search result:
             res.data.map((curr, index) => {
+				// push the corresponding data to the arrays
 				indices.push(index);
+				// we don't want a very long title to mess up our formatting, so we truncate the text if its longer than TRUNCATION (default: 30)
 				titles.push(`**${curr.title.substring(0,TRUNCATION)}${curr.title.length >= TRUNCATION ? "..." : ""}**`);
 				artists.push(curr.artist_title ?? "Unknown");
 				ids.push(curr.id);
 			});
+
+			// output the search results embed
             const embed = new EmbedBuilder()
                 .setTitle("Search Results")
                 .addFields(
@@ -49,17 +59,34 @@ module.exports = {
 				.setFooter({text: "Type an index to show an art piece - This will expire in 10 seconds"});
             interaction.reply({ embeds: [embed] });
 			
+			/**
+			 * We will use a MessageCollector to get user input.
+			 * 
+			 * It takes in 3 parameters:
+			 * filter: a function to filter the messages we don't want
+			 * max: the max number of mesage to collect
+			 * time: how long we should collect messages for (in milliseconds)
+			 */
+
+			// we only want to collect messages that:
+			// - Are numbers
+			// - Are numbers that are between 0 and max(9, number of results)
+			// - From the slash command author
 			const filter = m => {
 				return !isNaN(parseInt(m.content)) && parseInt(m.content) >= 0 && parseInt(m.content) <= Math.min(9, indices.length) && m.author.id === interaction.user.id;
 			};
+
+			// create the collector
 			const collector = interaction.channel.createMessageCollector({ filter, max: 1, time: 10000 });
 
+			// an event; when we collect a valid message we will output the art based on the id
 			collector.on("collect", m => {
 				getArtById(ids[m.content]).then(res => {
 					interaction.followUp({embeds: [res]});
 				});
 			});
 			
+			// when the collector closes we will output an error if nothing was collected
 			collector.on("end", collected => {
 				if (collected.size === 0) {
 					interaction.followUp("Did not receive a response, please try again.");
