@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-// we need to import fetch for mode version of node (16.17.0), higher versions have fetch built-in
+// we need to import fetch for our version of node (16.17.0), higher versions have fetch built-in
 const { fetch } = require("undici");
 const { getArtById } = require("../utils/artEmbed.js");
 

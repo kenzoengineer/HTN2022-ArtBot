@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-// we need to import fetch for mode version of node (16.17.0), higher versions have fetch built-in
+// we need to import fetch for our version of node (16.17.0), higher versions have fetch built-in
 const { fetch } = require("undici");
 const { getArtById } = require("../utils/artEmbed.js");
 
@@ -8,30 +8,14 @@ module.exports = {
 		.setName("artrandom")
 		.setDescription("Show a random art piece"),
 	async execute(interaction) {
-		fetch(`https://api.artic.edu/api/v1/search`, {
+		fetch(`https://api.artic.edu/api/v1/artworks/search?fields=id&limit=1`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					resources: "artworks",
-					fields: [
-						"id"
-					],
-					boost: false,
-					limit: 1,
-					// an elasticsearch query to get a random artwork
+					boost: true,
+					// An elasticsearch query. We use function_score to replace the score with random_score
 					query: {
 						function_score: {
-							query: {
-								bool: {
-									filter: [
-										{
-											exists: {
-												field: "image_id",
-											},
-										},
-									],
-								},
-							},
 							boost_mode: "replace",
 							random_score: {
 								field: "id",
