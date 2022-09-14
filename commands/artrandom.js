@@ -12,7 +12,7 @@ module.exports = {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					boost: true,
+					boost: false,
 					// An elasticsearch query. We use function_score to replace the score with random_score
 					query: {
 						function_score: {
